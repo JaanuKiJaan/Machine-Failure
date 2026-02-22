@@ -11,30 +11,20 @@ import streamlit as st
 import joblib
 import pandas as pd
 
-# 1. Load the model (Ensure this filename matches your saved file)
 model = joblib.load("machine_model.pkl")
 
-st.title("🛠️ Machine Failure Prediction")
-st.write("Adjust the sensor values below to check machine health.")
+st.title("Machine Failure Prediction")
 
-# 2. Input Fields with realistic default values from your CSV
-# This helps prevent the 'all zeros' prediction error
-col1, col2 = st.columns(2)
+footfall = st.number_input("Footfall")
+tempMode = st.number_input("Temperature Mode")
+AQ = st.number_input("Air Quality")
+USS = st.number_input("Ultrasonic Sensor")
+CS = st.number_input("Current Sensor")
+VOC = st.number_input("VOC Sensor")
+RP = st.number_input("RPM Sensor")
+IP = st.number_input("IP Sensor")
+Temperature = st.number_input("Temperature")
 
-with col1:
-    footfall = st.number_input("Footfall", value=45)
-    tempMode = st.number_input("Temperature Mode", value=3)
-    AQ = st.number_input("Air Quality (AQ)", value=150)
-    USS = st.number_input("Ultrasonic Sensor (USS)", value=2500)
-    CS = st.number_input("Current Sensor (CS)", value=0.9)
-
-with col2:
-    VOC = st.number_input("VOC Sensor", value=400)
-    RP = st.number_input("RPM Sensor (RP)", value=500)
-    IP = st.number_input("IP Sensor", value=1.2)
-    Temperature = st.number_input("Temperature", value=22)
-
-# 3. Create DataFrame (Order MUST match the training columns)
 input_data = pd.DataFrame({
     'footfall': [footfall],
     'tempMode': [tempMode],
@@ -47,12 +37,10 @@ input_data = pd.DataFrame({
     'Temperature': [Temperature]
 })
 
-# 4. Prediction logic
 if st.button("Predict"):
     prediction = model.predict(input_data)
-    
-    # Display Results
+
     if prediction[0] == 1:
-        st.error("🚨 Machine Failure Detected!")
+        st.error(" Machine Failure Detected!")
     else:
-        st.success("✅ Machine is Working Normally")
+        st.success("Machine is Working Normally")
