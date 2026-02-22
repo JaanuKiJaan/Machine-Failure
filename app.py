@@ -44,12 +44,3 @@ if st.button("Predict"):
         st.error(" Machine Failure Detected!")
     else:
         st.success("Machine is Working Normally")
-]], columns=['footfall', 'tempMode', 'AQ', 'USS', 'CS', 'VOC', 'RP', 'IP', 'Temperature'])
-
-if st.button("Predict"):
-    prediction = model.predict(input_data)[0]
-
-    if prediction == 1:
-        st.error("Warning: Machine Failure Predicted!")
-    else:
-        st.success("Normal Operation: No Failure Predicted.")
