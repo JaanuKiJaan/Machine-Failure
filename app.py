@@ -11,35 +11,48 @@ import streamlit as st
 import joblib
 import pandas as pd
 
-# 1. Load the model
-try:
-    model = joblib.load("machine_model.pkl")
-except:
-    st.error("Model file not found. Check the filename!")
+# 1. Load the model (Ensure this filename matches your saved file)
+model = joblib.load("machine_model.pkl")
 
-st.title("Machine Failure Prediction")
+st.title("🛠️ Machine Failure Prediction")
+st.write("Adjust the sensor values below to check machine health.")
 
-# Using columns for better UI
+# 2. Input Fields with realistic default values from your CSV
+# This helps prevent the 'all zeros' prediction error
 col1, col2 = st.columns(2)
+
 with col1:
-    footfall = st.number_input("Footfall", value=100)
-    tempMode = st.number_input("Temp Mode", value=2)
-    AQ = st.number_input("Air Quality", value=50)
-    USS = st.number_input("USS", value=3000)
+    footfall = st.number_input("Footfall", value=45)
+    tempMode = st.number_input("Temperature Mode", value=3)
+    AQ = st.number_input("Air Quality (AQ)", value=150)
+    USS = st.number_input("Ultrasonic Sensor (USS)", value=2500)
+    CS = st.number_input("Current Sensor (CS)", value=0.9)
+
 with col2:
-    CS = st.number_input("Current Sensor", value=1.5)
-    VOC = st.number_input("VOC Sensor", value=200)
-    RP = st.number_input("RPM", value=1000)
-    IP = st.number_input("IP Sensor", value=1.0)
-Temperature = st.number_input("Temperature", value=25)
+    VOC = st.number_input("VOC Sensor", value=400)
+    RP = st.number_input("RPM Sensor (RP)", value=500)
+    IP = st.number_input("IP Sensor", value=1.2)
+    Temperature = st.number_input("Temperature", value=22)
 
-# Ensure order matches your X_train exactly
-cols = ['footfall', 'tempMode', 'AQ', 'USS', 'CS', 'VOC', 'RP', 'IP', 'Temperature']
-input_data = pd.DataFrame([[footfall, tempMode, AQ, USS, CS, VOC, RP, IP, Temperature]], columns=cols)
+# 3. Create DataFrame (Order MUST match the training columns)
+input_data = pd.DataFrame({
+    'footfall': [footfall],
+    'tempMode': [tempMode],
+    'AQ': [AQ],
+    'USS': [USS],
+    'CS': [CS],
+    'VOC': [VOC],
+    'RP': [RP],
+    'IP': [IP],
+    'Temperature': [Temperature]
+})
 
+# 4. Prediction logic
 if st.button("Predict"):
     prediction = model.predict(input_data)
+    
+    # Display Results
     if prediction[0] == 1:
-        st.error("Machine Failure Detected!")
+        st.error("🚨 Machine Failure Detected!")
     else:
-        st.success("Machine is Working Normally")
+        st.success("✅ Machine is Working Normally")
