@@ -11,36 +11,35 @@ import streamlit as st
 import joblib
 import pandas as pd
 
-model = joblib.load("machine_model.pkl")
+# 1. Load the model
+try:
+    model = joblib.load("machine_model.pkl")
+except:
+    st.error("Model file not found. Check the filename!")
 
 st.title("Machine Failure Prediction")
 
-footfall = st.number_input("Footfall")
-tempMode = st.number_input("Temperature Mode")
-AQ = st.number_input("Air Quality")
-USS = st.number_input("Ultrasonic Sensor")
-CS = st.number_input("Current Sensor")
-VOC = st.number_input("VOC Sensor")
-RP = st.number_input("RPM Sensor")
-IP = st.number_input("IP Sensor")
-Temperature = st.number_input("Temperature")
+# Using columns for better UI
+col1, col2 = st.columns(2)
+with col1:
+    footfall = st.number_input("Footfall", value=100)
+    tempMode = st.number_input("Temp Mode", value=2)
+    AQ = st.number_input("Air Quality", value=50)
+    USS = st.number_input("USS", value=3000)
+with col2:
+    CS = st.number_input("Current Sensor", value=1.5)
+    VOC = st.number_input("VOC Sensor", value=200)
+    RP = st.number_input("RPM", value=1000)
+    IP = st.number_input("IP Sensor", value=1.0)
+Temperature = st.number_input("Temperature", value=25)
 
-input_data = pd.DataFrame({
-    'footfall': [footfall],
-    'tempMode': [tempMode],
-    'AQ': [AQ],
-    'USS': [USS],
-    'CS': [CS],
-    'VOC': [VOC],
-    'RP': [RP],
-    'IP': [IP],
-    'Temperature': [Temperature]
-})
+# Ensure order matches your X_train exactly
+cols = ['footfall', 'tempMode', 'AQ', 'USS', 'CS', 'VOC', 'RP', 'IP', 'Temperature']
+input_data = pd.DataFrame([[footfall, tempMode, AQ, USS, CS, VOC, RP, IP, Temperature]], columns=cols)
 
 if st.button("Predict"):
     prediction = model.predict(input_data)
-
     if prediction[0] == 1:
-        st.error(" Machine Failure Detected!")
+        st.error("Machine Failure Detected!")
     else:
         st.success("Machine is Working Normally")
