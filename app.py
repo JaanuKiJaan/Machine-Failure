@@ -14,25 +14,36 @@ import pandas as pd
 model = joblib.load("machine_model.pkl")
 
 st.title("Machine Failure Prediction")
-st.write("Enter sensor data to predict if a machine will fail.")
 
-col1, col2 = st.columns(2)
+footfall = st.number_input("Footfall")
+tempMode = st.number_input("Temperature Mode")
+AQ = st.number_input("Air Quality")
+USS = st.number_input("Ultrasonic Sensor")
+CS = st.number_input("Current Sensor")
+VOC = st.number_input("VOC Sensor")
+RP = st.number_input("RPM Sensor")
+IP = st.number_input("IP Sensor")
+Temperature = st.number_input("Temperature")
 
-with col1:
-    footfall = st.number_input("Footfall")
-    tempMode = st.number_input("Temp Mode")
-    AQ = st.number_input("Air Quality (AQ)")
-    USS = st.number_input("USS")
-    CS = st.number_input("CS")
+input_data = pd.DataFrame({
+    'footfall': [footfall],
+    'tempMode': [tempMode],
+    'AQ': [AQ],
+    'USS': [USS],
+    'CS': [CS],
+    'VOC': [VOC],
+    'RP': [RP],
+    'IP': [IP],
+    'Temperature': [Temperature]
+})
 
-with col2:
-    VOC = st.number_input("VOC")
-    RP = st.number_input("RP")
-    IP = st.number_input("IP")
-    Temperature = st.number_input("Temperature")
+if st.button("Predict"):
+    prediction = model.predict(input_data)
 
-input_data = pd.DataFrame([[
-    footfall, tempMode, AQ, USS, CS, VOC, RP, IP, Temperature
+    if prediction[0] == 1:
+        st.error(" Machine Failure Detected!")
+    else:
+        st.success("Machine is Working Normally")
 ]], columns=['footfall', 'tempMode', 'AQ', 'USS', 'CS', 'VOC', 'RP', 'IP', 'Temperature'])
 
 if st.button("Predict"):
